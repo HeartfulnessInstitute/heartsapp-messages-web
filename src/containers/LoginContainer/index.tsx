@@ -1,54 +1,39 @@
 import * as React from 'react';
-import { Field, reduxForm } from "redux-form";
-import { Input, Button, Card, Form } from "antd";
-// import  Form  from 'antd/lib/form';
+import { Card } from "antd";
+import { Redirect } from "react-router-dom";
+import { connect } from 'react-redux';
+
+
 import Header from '../../Layout/Header';
 
-import MakeField from '../../components/Forms/MakeField';
-
-const AInput = MakeField(Input)
-const Login = (props) => {
-  let { handleSubmit, pristine, submitting , handleChange} = props
-
-  const submit = (values) =>{
-    console.log(values)
-  }
-    return(
-      <React.Fragment>
-        <Header />
-        <div style={{'display': 'flex', alignItems: 'center', justifyContent: 'center', 'height': 'calc(100vh - 64px)'}}>
-          <Card>
-            <Form onFinish={handleSubmit(submit)}>
-            <h2 style={{'textAlign': "center"}}>Login</h2>
-            <Field label="Email" name="email" component={AInput} placeholder="email" hasFeedback onChange={handleChange}/>
-
-            <Field  abel="Password" name="password" component={AInput} placeholder="Password" hasFeedback onChange={handleChange} />
-            <Form.Item style={{'textAlign': 'center'}}>
-            <Button type="primary" disabled={pristine || submitting} htmlType="submit" loading={submitting}>
-              Submit
-            </Button>
-            </Form.Item>
-            </Form>
-          </Card>
-        </div>
-      </React.Fragment>
-    )
+interface LoginProps {
+  authorized: boolean;
 }
 
-const validate = values => {
-    const errors = {password: '', email: ''};
-    if (!values.password) {
-      errors.password = "Required";
-    }
-    if(!values.email || !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-      errors.email = "Invalid email";
-    }
-  
-    return errors;
-  };
+const Login : React.FC<LoginProps> = (props) => {
+  if(props.authorized) {
+    return(
+      <Redirect to="/dashboard" />
+    )
+  }
+  const contentfulLink = `https://be.contentful.com/oauth/authorize?response_type=token&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=https://localhost:3000&scope=content_management_manage`;
+  return(
+    <React.Fragment>
+      <Header />
+      <div style={{'display': 'flex', alignItems: 'center', justifyContent: 'center', 'height': 'calc(100vh - 64px)'}}>
+        <Card>
+          <a href={contentfulLink}> Login with contentful</a>
+        </Card>
+      </div>
+    </React.Fragment>
+  )
+}
 
-  export default reduxForm({
-    form: "loginForm", // a unique identifier for this form
-    validate
-  })(Login);
-  
+const mapStateToProps = state => {
+  return {
+      authorized: state.authStore.authorized,
+  };
+};
+
+export default connect(mapStateToProps)(Login);
+

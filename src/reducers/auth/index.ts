@@ -1,10 +1,12 @@
 
+import { SIGN_IN } from '../../actions/auth';
+
 function authStore(state = {
-    authState: 'not-initated',
+    authorized: false,
 }, action) {
     switch (action.type) {
-        // case AUTHENTICTION_INIT:
-        //     return { ...state }
+        case SIGN_IN:
+            return { ...state, authorized: true }
         default:
             return state;
     }

@@ -13,7 +13,7 @@ const formItemLayout = {
   };
 
 
-const makeField = Component => ({ input, meta, children, hasFeedback, label, ...rest }) => {
+const makeField = Component => ({ input, type, meta, children, hasFeedback, label, ...rest }) => {
     const hasError = meta.touched && meta.invalid;
     return (
       <FormItem
@@ -25,7 +25,7 @@ const makeField = Component => ({ input, meta, children, hasFeedback, label, ...
         labelAlign={'left'}
       >
        
-        <Component {...input} {...rest} children={children}  />
+        <Component {...input} {...rest} children={children} type={type} />
       </FormItem>
     );
   };

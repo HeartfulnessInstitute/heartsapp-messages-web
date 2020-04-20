@@ -11,12 +11,9 @@ const Dashboard = () => {
         </Header>
         <Layout>
           <Sider style={{background: 'black'}} width={200} className="site-layout-background">
-            <div style={{color: 'white'}}>
+            <Menu style={{color: 'white'}}>
                 Menu1
-            </div>
-            <div style={{color: 'white'}}>
-                Menu2
-            </div>
+            </Menu>
           </Sider>
           <Layout style={{ padding: '0' }}>
             <Content

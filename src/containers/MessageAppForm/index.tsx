@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector } from "redux-form";
 import { Input, Button, Form, Radio, notification } from "antd";
-import {Editor, EditorState, convertToRaw} from 'draft-js';
+import { EditorState, RichUtils} from 'draft-js';
 import { stateToMarkdown } from "draft-js-export-markdown";
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
 
@@ -47,7 +47,41 @@ let MessageAppForm = (props) => {
         reset()
         setEditorState(EditorState.createEmpty())
       }
-      
+     
+    const _handleKeyCommand = (command) => {
+        const newState = RichUtils.handleKeyCommand(editorState, command);
+        if (newState) {
+          onChange(newState);
+          return true;
+        }
+        return false;
+      }
+    
+    const  _onTab =(e)  =>{
+        const maxDepth = 4;
+        onChange(RichUtils.onTab(e, editorState, maxDepth));
+      }
+    
+    const  _toggleBlockType = (blockType) => {
+        onChange(
+          RichUtils.toggleBlockType(
+            editorState,
+            blockType
+          )
+        );
+      }
+    
+    const  _toggleInlineStyle = (inlineStyle) => {
+        onChange(
+          RichUtils.toggleInlineStyle(
+           editorState,
+            inlineStyle
+          )
+        );
+      }
+    const onChange = (state) => {
+      setEditorState(state)
+    }
     return(
         <div >
           <Form onFinish={handleSubmit(submit)}>
@@ -55,7 +89,14 @@ let MessageAppForm = (props) => {
             <Field name="title" component={AInput} placeholder="Title" hasFeedback />
 
             {/* <Editor editorState={editorState} onChange={setEditorState} /> */}
-            <RichTextEditor />
+            <RichTextEditor 
+              _handleKeyCommand={_handleKeyCommand} 
+              _onTab={_onTab} 
+              _toggleBlockType={_toggleBlockType} 
+              _toggleInlineStyle={_toggleInlineStyle} 
+              editorState ={editorState}
+              onChange={onChange}
+            />
             <Field name="media" component={ARadioGroup} value={mediaValue} >
                 <Radio value="video">Add video</Radio>
                 <Radio value="image">Add Image</Radio>

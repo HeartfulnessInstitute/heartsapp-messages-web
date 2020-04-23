@@ -2,58 +2,36 @@ import * as React from 'react';
 import {Editor, EditorState, RichUtils} from 'draft-js';
 import StyleButton from './StyleButton';
 import './style.scss';
+import { throwStatement } from '@babel/types';
 
 interface RichTextEditorState {
     editorState: any;
 }
-class RichTextEditor extends React.Component<{}, RichTextEditorState> {
+interface RichTextEditorProps {
+    editorState: any;
+    _handleKeyCommand: (e) => void; 
+    _onTab: (e) => void; 
+    _toggleBlockType: (e) => void; 
+    _toggleInlineStyle: (e) => void; 
+    onChange: (e) => void;
+}
+class RichTextEditor extends React.Component<RichTextEditorProps, RichTextEditorState> {
   constructor(props) {
     super(props);
-    this.state = {editorState: EditorState.createEmpty()};
+    this.state = {editorState: props.editorState};
   }
-    // focus = () => this.refs.editor.focus();
-    onChange = (editorState) => this.setState({editorState});
+    onChange = (editorState) => this.props.onChange(editorState);
 
-    handleKeyCommand = (command) => this._handleKeyCommand(command);
-    onTab = (e) => this._onTab(e);
-    toggleBlockType = (type) => this._toggleBlockType(type);
-    toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+    handleKeyCommand = (command) => this.props._handleKeyCommand(command);
+    onTab = (e) => this.props._onTab(e);
+    toggleBlockType = (type) => this.props._toggleBlockType(type);
+    toggleInlineStyle = (style) => this.props._toggleInlineStyle(style);
 
-  _handleKeyCommand(command) {
-    const {editorState} = this.state;
-    const newState = RichUtils.handleKeyCommand(editorState, command);
-    if (newState) {
-      this.onChange(newState);
-      return true;
-    }
-    return false;
-  }
-
-  _onTab(e) {
-    const maxDepth = 4;
-    this.onChange(RichUtils.onTab(e, this.state.editorState, maxDepth));
-  }
-
-  _toggleBlockType(blockType) {
-    this.onChange(
-      RichUtils.toggleBlockType(
-        this.state.editorState,
-        blockType
-      )
-    );
-  }
-
-  _toggleInlineStyle(inlineStyle) {
-    this.onChange(
-      RichUtils.toggleInlineStyle(
-        this.state.editorState,
-        inlineStyle
-      )
-    );
-  }
+  
 
   render() {
-    const {editorState} = this.state;
+    // const {editorState} = this.state;
+    const { editorState } = this.props;
 
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
@@ -121,7 +99,7 @@ const BLOCK_TYPES = [
   {label: 'Blockquote', style: 'blockquote'},
   {label: 'UL', style: 'unordered-list-item'},
   {label: 'OL', style: 'ordered-list-item'},
-  {label: 'Code Block', style: 'code-block'},
+//   {label: 'Code Block', style: 'code-block'},
 ];
 
 const BlockStyleControls = (props) => {

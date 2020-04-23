@@ -1,0 +1,14 @@
+.dashboard-layout-wrapper {
+    height: 100vh;
+}
+
+.site-layout-background {
+    min-height: 100vh;
+    background: white;
+}
+
+.header {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+}

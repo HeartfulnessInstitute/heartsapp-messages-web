@@ -1,0 +1,12 @@
+.message-list-wrapper {
+    margin-top: 100px;
+    .ant-card {
+        margin: 34px;
+    }
+    .center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: calc(100vh - 100px);
+    }
+}

@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 
 type PrivateRouteProps = { component: FunctionComponent } & RouteComponentProps;
 
-const PrivateRoute : React.FC<PrivateRouteProps> = ({ authorized, children, ...rest }) => {
-    return(<Route
+const PrivateRoute : React.FC<PrivateRouteProps> = ({ content,authorized, component: Component, ...rest }) => {
+    return(
+    <Route
         {...rest}
-        render={({ location }) =>
+        render={({ location }, props) =>
         authorized ? (
-            children
+            <Component {...props} />
           ) : (
             <Redirect
               to={{

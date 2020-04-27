@@ -16,7 +16,7 @@ const Login : React.FC<LoginProps> = (props) => {
       <Redirect to="/dashboard" />
     )
   }
-  const contentfulLink = `https://be.contentful.com/oauth/authorize?response_type=token&client_id=${process.env.REACT_APP_CLIENT_ID}&redirect_uri=https://localhost:3000&scope=content_management_manage`;
+  const contentfulLink = `https://be.contentful.com/oauth/authorize?response_type=token&client_id=2-Hm9cn812fJ5K7RjAfTaP7TJvf11tE_qvc-mqJSjWg&redirect_uri=https://qa-heartsapp-messages.firebaseapp.com&scope=content_management_manage`;
   return(
     <React.Fragment>
       <Header />

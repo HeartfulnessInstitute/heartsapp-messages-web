@@ -5,34 +5,44 @@ export const SET_MESSAGES_LIST_LOADER = "SET_MESSAGES_LIST_LOADER";
 
 
 export const getMessageList = () => dispatch => {
-    dispatch(setLoader(true))
+    dispatch(setLoader(true, 'listMessages'))
     client.getSpace('0il7a0jwfqsh')
     .then((space) => {
-        console.log(space.getEnvironment('master').then(env => {
-            env.getAsset('4KjNvNU0WHiL0kZAljRwFw').then((res) => {
-                console.log('asset', res)
-            })
-        }))
-
-       
-      // Now that we have a space, we can get entries from that space
-      space.getEntries()
-      .then((entries) => {
-          dispatch({
-              type: GET_MESSAGES_LIST,
-              messages: entries.items
-          })
-          dispatch(setLoader(false))
-      })}).catch((e) => {
-        dispatch(setLoader(false))
+        space.getEnvironment('master').then(env => {
+            env.getEntries()
+            .then((entries) => {
+                dispatch({
+                    type: GET_MESSAGES_LIST,
+                    messages: entries.items
+                })
+                dispatch(setLoader(false, 'listMessages'))
+            })})
+        }).catch((e) => {
+        dispatch(setLoader(false, 'listMessages'))
       })
    
 }
 
-const setLoader = (status) => dispatch => {
+export const onDeleteMessage = (id) => dispatch => {
+    dispatch(setLoader({[id]: true}, 'deleteMessage'))
+    return client.getSpace('0il7a0jwfqsh')
+    .then((space) => {
+        space.getEnvironment('master').then(env => {
+            env.getEntry(id)
+            .then((entry) => {
+               entry.delete()
+                dispatch(setLoader({[id]: false}, 'deleteMessage'))
+            })})
+        }).catch((e) => {
+        dispatch(setLoader({[id]: false}, 'deleteMessage'))
+        throw new Error(e)
+      })
+}
+
+const setLoader = (status, type) => dispatch => {
     dispatch({
         type: SET_MESSAGES_LIST_LOADER,
-        loaderType: 'listMessages',
+        loaderType: type,
         loading: status
     })
 }

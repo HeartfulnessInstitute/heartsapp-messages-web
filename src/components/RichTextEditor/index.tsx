@@ -1,12 +1,9 @@
 import * as React from 'react';
-import {Editor, EditorState, RichUtils} from 'draft-js';
+import {Editor} from 'draft-js';
 import StyleButton from './StyleButton';
 import './style.scss';
-import { throwStatement } from '@babel/types';
 
-interface RichTextEditorState {
-    editorState: any;
-}
+
 interface RichTextEditorProps {
     editorState: any;
     _handleKeyCommand: (e) => void; 
@@ -15,11 +12,7 @@ interface RichTextEditorProps {
     _toggleInlineStyle: (e) => void; 
     onChange: (e) => void;
 }
-class RichTextEditor extends React.Component<RichTextEditorProps, RichTextEditorState> {
-  constructor(props) {
-    super(props);
-    this.state = {editorState: props.editorState};
-  }
+class RichTextEditor extends React.Component<RichTextEditorProps> {
     onChange = (editorState) => this.props.onChange(editorState);
 
     handleKeyCommand = (command) => this.props._handleKeyCommand(command);
@@ -30,7 +23,6 @@ class RichTextEditor extends React.Component<RichTextEditorProps, RichTextEditor
   
 
   render() {
-    // const {editorState} = this.state;
     const { editorState } = this.props;
 
     // If the user changes block type before entering any text, we can

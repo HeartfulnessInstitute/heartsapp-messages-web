@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@contentful/rich-text-from-markdown": "^13.4.0",
+    "@contentful/rich-text-html-renderer": "^13.4.0",
+    "@contentful/rich-text-types": "^14.1.0",
     "@reduxjs/toolkit": "^1.3.4",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",

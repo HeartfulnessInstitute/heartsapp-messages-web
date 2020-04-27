@@ -3,6 +3,10 @@ import { Card } from "antd";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 
+import { 
+  APP_CLIENT_ID,
+  REDIRECT_URL
+} from '../../Utils/constants';
 
 import Header from '../../Layout/Header';
 
@@ -16,7 +20,7 @@ const Login : React.FC<LoginProps> = (props) => {
       <Redirect to="/dashboard" />
     )
   }
-  const contentfulLink = `https://be.contentful.com/oauth/authorize?response_type=token&client_id=2-Hm9cn812fJ5K7RjAfTaP7TJvf11tE_qvc-mqJSjWg&redirect_uri=https://qa-heartsapp-messages.firebaseapp.com&scope=content_management_manage`;
+  const contentfulLink = `https://be.contentful.com/oauth/authorize?response_type=token&client_id=${APP_CLIENT_ID}&redirect_uri=${REDIRECT_URL}&scope=content_management_manage`;
   return(
     <React.Fragment>
       <Header />

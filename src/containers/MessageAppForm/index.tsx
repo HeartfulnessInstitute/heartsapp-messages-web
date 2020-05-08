@@ -14,14 +14,14 @@ const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 
 let MessageAppForm = (props) => {
-    let { handleSubmit, mediaValue, reset, showLoader } = props
+    let { handleSubmit, mediaValue, reset, showLoaderForPublish,showLoaderForDraft } = props
 
     const [editorState, setEditorState] = React.useState(
         EditorState.createEmpty()
       );
     const [imageData, setImageData] = React.useState()
    
-    const submit = async(values) =>{
+    const submit = async(values,publish) =>{
         const content =  editorState.getCurrentContent()
         const document = await richTextFromMarkdown(stateToMarkdown(content));
         let data = { title: values.title, messageText: document, url: '', image: ''};
@@ -30,7 +30,7 @@ let MessageAppForm = (props) => {
         } else {
             data = { ...data, image: imageData }
         }
-        props.addOrUpdateMessage(data).then(() => {
+        props.addOrUpdateMessage(data,publish).then(() => {
           clearForm()
           notification.success({
             message: 'Message created successfully!',
@@ -84,7 +84,7 @@ let MessageAppForm = (props) => {
     }
     return(
         <div >
-          <Form onFinish={handleSubmit(submit)}>
+          <Form>
             <h2 style={{'textAlign': "center", 'marginBottom': '25px'}}>Message </h2>
             <Field name="title" component={AInput} placeholder="Title" hasFeedback />
 
@@ -109,9 +109,18 @@ let MessageAppForm = (props) => {
             }
           
             <Form.Item style={{'textAlign': 'center'}}>
-            <Button type="primary" disabled={showLoader} htmlType="submit" loading={showLoader}>
-              Submit
+            <Button type="primary" disabled={showLoaderForDraft} htmlType="submit" loading={showLoaderForDraft=="draft"} onClick={handleSubmit(submit,false)}>
+              Save as draft
             </Button>
+            <Button type="primary"  htmlType="submit" >
+              Preview
+            </Button>
+            <Button type="primary" disabled={showLoaderForPublish} htmlType="submit" loading={showLoaderForPublish=="publish"} onClick={handleSubmit(submit,true)}>
+              Publish
+            </Button>
+            {
+               console.log("publishhhhh",showLoaderForPublish)
+            }
             </Form.Item>
             </Form>
         </div>
@@ -119,8 +128,10 @@ let MessageAppForm = (props) => {
 }
 
 const validate = values => {
+   
   const errors = {title: ''};
   if (!values.title) {
+
     errors.title = "Required";
   }
   return errors;
@@ -140,13 +151,14 @@ const validate = values => {
     return {
     mediaValue,
     initialValues: {media: 'video'},
-    showLoader: state.loaderStore.loaders.addMessage
+    showLoaderForPublish: state.loaderStore.loaders.addMessage
     }
+    
   }
 
   const mapDispatchToProps = (dispatch) => {
     return {
-        addOrUpdateMessage : (data) => dispatch(addOrUpdateMessage(data))
+        addOrUpdateMessage : (data,publish) => dispatch(addOrUpdateMessage(data,publish))
     }
   }
 

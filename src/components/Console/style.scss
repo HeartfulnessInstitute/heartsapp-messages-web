@@ -1,0 +1,14 @@
+.console-layout-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+    a {
+        width: 200px;
+        padding: 15px 20px;
+        margin: 5px;
+        border: 1px solid;
+        text-align: center;
+    }
+}

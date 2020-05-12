@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Routes from './containers/Routes';
-import {BrowserRouter as Router} from 'react-router-dom';
+import { Router} from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 
 import './App.css';

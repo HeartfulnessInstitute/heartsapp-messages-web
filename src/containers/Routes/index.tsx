@@ -4,13 +4,15 @@ import { connect } from 'react-redux';
 import * as qs from "query-string";
 
 import LoginContainer from '../LoginContainer';
-import Dashboard from '../../Layout/Dashboard';
+import Console from '../../components/Console';
+import PostMessage from '../PostMessage';
+import ListMessages from '../ListMessages';
 import PageNotFound from '../../components/PageNotFound';
 import PrivateRoute from '../PrivateRoute';
 import Home from '../Home';
 import { SIGN_IN } from '../../actions/auth';
 import { AppStorage } from '../../AppStore';
-
+import { configureContentfulManagement } from '../../config/contentfulManagementApi'
 const appStorage = new AppStorage()
 
 const Routes = (props) => {
@@ -24,13 +26,16 @@ const Routes = (props) => {
      }
 
      if(qsObj["access_token"] || !!(appStorage.getFromLocalStorage('accessToken'))) {
-        props.signIn()
+        props.signIn();
+        configureContentfulManagement()
      }
     
     return(
         <Switch>
+            <PrivateRoute path={"/dashboard"} exact={true} component={Console} />
+            <PrivateRoute path={"/messages"} exact={true} component={ListMessages} />
+            <PrivateRoute path='/post' exact={true} component={PostMessage} />
             <Route path="/login" exact={true} component={LoginContainer} />
-            <PrivateRoute path={"/dashboard"} exact={true} component={Dashboard} /> 
             <Route path="/" exact={true} component={Home} />
             <Route path={"/*"} component={PageNotFound} />
         </Switch>

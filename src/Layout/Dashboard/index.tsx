@@ -1,32 +1,28 @@
 import * as React from 'react';
-import {  Layout, Menu  } from 'antd';
+import {  Layout  } from 'antd';
+import { Link } from 'react-router-dom';
 
-const { Header, Content, Sider } = Layout;
+import './style.scss';
 
-const Dashboard = () => {
+const { Header, Content } = Layout;
+
+const Dashboard = (props) => {
     return(
         <Layout>
         <Header className="header">
           <div className="logo" />
+          <Link to='/dashboard'> Dashboard</Link>
         </Header>
-        <Layout>
-          <Sider style={{background: 'black'}} width={200} className="site-layout-background">
-            <Menu style={{color: 'white'}}>
-                Menu1
-            </Menu>
-          </Sider>
-          <Layout style={{ padding: '0' }}>
+          <Layout className={'dashboard-layout-wrapper'} style={{ padding: '0' }}>
             <Content
               className="site-layout-background"
               style={{
-                padding: 24,
+                padding: 0,
                 margin: 0,
-                minHeight: 280,
               }}
             >
-              {/* {props.component} */}
+              {props.children}
             </Content>
-          </Layout>
         </Layout>
       </Layout>
     )

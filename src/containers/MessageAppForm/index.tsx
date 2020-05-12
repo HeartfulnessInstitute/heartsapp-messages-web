@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector } from "redux-form";
-import { Input, Button, Form, Radio, notification } from "antd";
+import { Input, Button, Form, Radio, notification,Modal } from "antd";
 import { EditorState, RichUtils} from 'draft-js';
 import { stateToMarkdown } from "draft-js-export-markdown";
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
@@ -9,7 +9,7 @@ import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
 import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
 import RichTextEditor from '../../components/RichTextEditor';
-
+import './style.scss';
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
@@ -19,7 +19,6 @@ let MessageAppForm = (props) => {
         EditorState.createEmpty()
       );
     const [imageData, setImageData] = React.useState()
-   
     const submit =(publish) => async(values) =>{
         const content =  editorState.getCurrentContent()
         const document = await richTextFromMarkdown(stateToMarkdown(content));
@@ -106,20 +105,13 @@ let MessageAppForm = (props) => {
               <input type="file" onChange={(e) => setImageData(e.target.files[0])} />
               : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
             }
-          
             <Form.Item style={{'textAlign': 'center'}}>
             <Button type="primary" disabled={showLoaderForPublish=="draft"} htmlType="submit" loading={showLoaderForPublish=="draft"} onClick={handleSubmit(submit(false))}>
               Save as draft
             </Button>
-            <Button type="primary"  htmlType="submit" >
-              Preview
-            </Button>
             <Button type="primary" disabled={showLoaderForPublish=="publish"} htmlType="submit" loading={showLoaderForPublish=="publish"} onClick={handleSubmit(submit(true))}>
               Publish
             </Button>
-            {
-               console.log("publish",showLoaderForPublish)
-            }
             </Form.Item>
             </Form>
         </div>

@@ -4,16 +4,8 @@ export const SET_MESSAGES_LIST_LOADER = "SET_MESSAGES_LIST_LOADER";
 
 
 export const addOrUpdateMessage = (formData, publish) => dispatch => {
-    //this is the reducer
-    if (publish==true) {
-        dispatch(setLoader("publish"))
-        // console.log("publish in if",publish)
-    }
-    else {
-
-        dispatch(setLoader("draft"))
-
-    }
+    const loaderType = publish ? "publish" : "draft";
+    dispatch(setLoader(loaderType))
     console.log("publish value",publish)
     return client.getSpace('0il7a0jwfqsh')
         .then((space) => {
@@ -76,7 +68,9 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                     console.log('success', res)
                                     if (publish) {
                                         res.publish()
+                                        
                                     }
+                                    dispatch(setLoader(""))
                                 })
 
                             })
@@ -93,7 +87,7 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                         if (publish) {
                             res.publish()
                         }
-                        dispatch(setLoader(false))
+                        dispatch(setLoader(""))
                     })
                 }
 
@@ -102,7 +96,7 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
             // Now that we have a space, we can get entries from that space
         }).catch((e) => {
             console.log('fail ===>', e)
-            dispatch(setLoader(false))
+            dispatch(setLoader(""))
         }
         )
 
@@ -110,8 +104,6 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
 
 const setLoader = (status) => dispatch => {
     dispatch({
-        //this is the action
-        //action must have a type property
         type: SET_MESSAGES_LIST_LOADER,
         loaderType: 'addMessage',
         loading: status

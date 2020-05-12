@@ -5,7 +5,7 @@ export const SET_MESSAGES_LIST_LOADER = "SET_MESSAGES_LIST_LOADER";
 
 export const addOrUpdateMessage = (formData, publish) => dispatch => {
     //this is the reducer
-    if (publish) {
+    if (publish==true) {
         dispatch(setLoader("publish"))
         // console.log("publish in if",publish)
     }

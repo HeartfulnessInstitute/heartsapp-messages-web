@@ -12,7 +12,6 @@ import RichTextEditor from '../../components/RichTextEditor';
 
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
-
 let MessageAppForm = (props) => {
     let { handleSubmit, mediaValue, reset, showLoaderForPublish,showLoaderForDraft } = props
 
@@ -21,7 +20,7 @@ let MessageAppForm = (props) => {
       );
     const [imageData, setImageData] = React.useState()
    
-    const submit = async(values,publish) =>{
+    const submit =(publish) => async(values) =>{
         const content =  editorState.getCurrentContent()
         const document = await richTextFromMarkdown(stateToMarkdown(content));
         let data = { title: values.title, messageText: document, url: '', image: ''};
@@ -109,17 +108,17 @@ let MessageAppForm = (props) => {
             }
           
             <Form.Item style={{'textAlign': 'center'}}>
-            <Button type="primary" disabled={showLoaderForDraft} htmlType="submit" loading={showLoaderForDraft=="draft"} onClick={handleSubmit(submit,false)}>
+            <Button type="primary" disabled={showLoaderForPublish=="draft"} htmlType="submit" loading={showLoaderForPublish=="draft"} onClick={handleSubmit(submit(false))}>
               Save as draft
             </Button>
             <Button type="primary"  htmlType="submit" >
               Preview
             </Button>
-            <Button type="primary" disabled={showLoaderForPublish} htmlType="submit" loading={showLoaderForPublish=="publish"} onClick={handleSubmit(submit,true)}>
+            <Button type="primary" disabled={showLoaderForPublish=="publish"} htmlType="submit" loading={showLoaderForPublish=="publish"} onClick={handleSubmit(submit(true))}>
               Publish
             </Button>
             {
-               console.log("publishhhhh",showLoaderForPublish)
+               console.log("publish",showLoaderForPublish)
             }
             </Form.Item>
             </Form>

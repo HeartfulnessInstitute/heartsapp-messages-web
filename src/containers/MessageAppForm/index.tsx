@@ -9,7 +9,8 @@ import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
 import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
 import RichTextEditor from '../../components/RichTextEditor';
-import './style.scss';
+import PreviewComponent from '../../components/PreviewComponent'
+
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
@@ -19,6 +20,10 @@ let MessageAppForm = (props) => {
         EditorState.createEmpty()
       );
     const [imageData, setImageData] = React.useState()
+    const [formData,setformData]=React.useState(
+      {showModal:false,title:'',video:'',url:'',imageData}
+      
+    )
     const submit =(publish) => async(values) =>{
         const content =  editorState.getCurrentContent()
         const document = await richTextFromMarkdown(stateToMarkdown(content));
@@ -80,6 +85,21 @@ let MessageAppForm = (props) => {
     const onChange = (state) => {
       setEditorState(state)
     }
+   const handleOk = () => {
+    setformData({showModal:false,title:"",video:"",url:"",imageData:""})
+    };
+  
+    const handleCancel = () => {
+      setformData({showModal:false,title:"",video:"",url:"" ,imageData:""})
+    };
+  
+    const preview =(values) => {
+      const data={...values,showModal:true,imageData}
+      console.log("values",data)
+      setformData(data)
+
+    }
+
     return(
         <div >
           <Form>
@@ -105,15 +125,26 @@ let MessageAppForm = (props) => {
               <input type="file" onChange={(e) => setImageData(e.target.files[0])} />
               : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
             }
+          
             <Form.Item style={{'textAlign': 'center'}}>
             <Button type="primary" disabled={showLoaderForPublish=="draft"} htmlType="submit" loading={showLoaderForPublish=="draft"} onClick={handleSubmit(submit(false))}>
               Save as draft
+            </Button>
+            <Button type="primary" onClick={handleSubmit(preview)}>
+              Preview
             </Button>
             <Button type="primary" disabled={showLoaderForPublish=="publish"} htmlType="submit" loading={showLoaderForPublish=="publish"} onClick={handleSubmit(submit(true))}>
               Publish
             </Button>
             </Form.Item>
             </Form>
+            <Modal
+          visible={formData.showModal}
+          onOk={handleOk}
+          onCancel={handleCancel}
+        >
+          <PreviewComponent  formData={formData}></PreviewComponent>
+        </Modal>
         </div>
     )
 }
@@ -160,3 +191,4 @@ const validate = values => {
 
 
   export default MessageAppForm;
+

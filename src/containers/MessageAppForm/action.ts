@@ -65,7 +65,7 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                     }
                                 }
                                 env.createEntry('message', data).then((entry) => {
-                                    console.log('success', res)
+                                    console.log('success',formData.image.file)
                                     if (publish) {
                                         res.publish()
                                         

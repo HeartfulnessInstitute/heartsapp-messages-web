@@ -95,9 +95,7 @@ let MessageAppForm = (props) => {
   
     const preview =(values) => {
       const data={...values,showModal:true,imageData}
-      console.log("values",data)
       setformData(data)
-
     }
 
     return(

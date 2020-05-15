@@ -93,8 +93,10 @@ let MessageAppForm = (props) => {
     setformData({ showModal: false, title: "", video: "", url: "", imageData: "" })
   };
 
-  const preview = (values) => {
-    const data = { ...values, showModal: true, imageData }
+  const preview = async(values) => {
+    let data = { ...values, showModal: true, imageData }
+    const content = editorState.getCurrentContent()
+    data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
     setformData(data)
   }
 

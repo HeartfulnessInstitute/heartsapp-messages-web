@@ -31,6 +31,7 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
     message.fields.image_url && getImage(message)
     console.log(message)
     const res = message.fields.videoUrl && get(message, 'fields.videoUrl.en-US').split('/')
+    console.log("res",res)
         return(
         <Card>
             <h2>
@@ -43,7 +44,7 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
                 icon={<DeleteOutlined />} 
                 size={'middle'} 
                 loading={showDeleteMessageLoader && showDeleteMessageLoader[message.sys.id]} />}
-              {message.fields.videoUrl && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/> }
+              {message.fields.videoUrl && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/>}
               {message.fields.image_url && <img id={get(message, 'fields.image_url.en-US.sys.id')} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAAAA1BMVEXy8vJkA4prAAAASElEQVR4nO3BMQEAAADCoPVPbQ0PoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIALA8UNAAFusnLHAAAAAElFTkSuQmCC" />}
             <div>
                 {message.fields.messageText && <RichTextRenderer renderDocument={get(message, 'fields.messageText.en-US')}/>}

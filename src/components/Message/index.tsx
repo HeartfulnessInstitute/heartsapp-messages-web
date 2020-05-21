@@ -17,6 +17,8 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
 
     const [updateImage, updateImageSrc] = useState(false);
 
+    const [redirectToEdit, updateRedirectToEdit] = useState(false)
+
     const getImage = (message) => {
         fetchImageById(get(message, 'fields.image_url.en-US.sys.id')).then((imgSrc) => {
             console.log('image src', imgSrc)
@@ -29,12 +31,19 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
     }
     const OnEditMessage = () =>{
         console.log("hi")
+        //dipatch message data
+        updateRedirectToEdit(true)
     }
 
     message.fields.image_url && getImage(message)
     console.log(message)
     const res = message.fields.videoUrl && get(message, 'fields.videoUrl.en-US').split('/')
     console.log("res",res)
+        if(redirectToEdit) {
+            return (
+                <Redirect to='/edit' />
+            )
+        }
         return(
         <Card>
             <h2>

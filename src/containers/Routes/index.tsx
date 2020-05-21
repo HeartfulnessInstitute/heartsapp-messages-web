@@ -35,6 +35,7 @@ const Routes = (props) => {
             <PrivateRoute path={"/dashboard"} exact={true} component={Console} />
             <PrivateRoute path={"/messages"} exact={true} component={ListMessages} />
             <PrivateRoute path='/post' exact={true} component={PostMessage} />
+            <PrivateRoute path='/edit' exact={true} component={PostMessage} />
             <Route path="/login" exact={true} component={LoginContainer} />
             <Route path="/" exact={true} component={Home} />
             <Route path={"/*"} component={PageNotFound} />

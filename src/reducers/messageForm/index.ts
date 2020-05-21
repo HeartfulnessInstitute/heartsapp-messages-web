@@ -2,13 +2,13 @@
 
 function messageForm(state = {
     data: {
-        media: 'youtube',
-        title: 'test title'
+        media: '',
+        title: ''
     },
 }, action) {
     switch (action.type) {
         // case FILL_FORM:
-        //     return { ...state, data: action.data }
+        //     return { ...state, data: action.formData }
         default:
             return state;
     }

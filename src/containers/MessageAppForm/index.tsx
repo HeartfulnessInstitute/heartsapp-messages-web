@@ -98,6 +98,7 @@ let MessageAppForm = (props) => {
     setformData(data)
   }
 
+  console.log('props', props.initialValues)
   return (
     <div >
       <Form>

@@ -3,7 +3,7 @@
 function messageForm(state = {
     data: {
         media: 'youtube',
-        title: 'video'
+        title: 'test title'
     },
 }, action) {
     switch (action.type) {

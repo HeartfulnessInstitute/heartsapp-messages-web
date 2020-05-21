@@ -172,7 +172,7 @@ const mapStateToProps = state => {
   const mediaValue = selector(state, 'media')
   return {
     mediaValue,
-    initialValues: { media: 'video' },
+    initialValues: { media: 'video', title: state.messageForm.data.title },
     showLoaderForPublish: state.loaderStore.loaders.addMessage
   }
 

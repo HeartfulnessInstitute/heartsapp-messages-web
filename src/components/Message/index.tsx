@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Card } from 'antd';
 import { get } from 'lodash';
 import { Button } from 'antd';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined,EditOutlined} from '@ant-design/icons';
 import { fetchImageById } from '../../Services/fetchImage';
-
+import { Redirect} from 'react-router-dom';
 import './style.scss'
 import RichTextRenderer from '../RichTextRenderer';
 
@@ -27,6 +27,9 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
             }
         })
     }
+    const OnEditMessage = () =>{
+        console.log("hi")
+    }
 
     message.fields.image_url && getImage(message)
     console.log(message)
@@ -46,6 +49,7 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
                 loading={showDeleteMessageLoader && showDeleteMessageLoader[message.sys.id]} />}
               {message.fields.videoUrl && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/>}
               {message.fields.image_url && <img id={get(message, 'fields.image_url.en-US.sys.id')} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAAAA1BMVEXy8vJkA4prAAAASElEQVR4nO3BMQEAAADCoPVPbQ0PoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIALA8UNAAFusnLHAAAAAElFTkSuQmCC" />}
+              <Button icon={<EditOutlined />} onClick={() => OnEditMessage()}></Button>
             <div>
                 {message.fields.messageText && <RichTextRenderer renderDocument={get(message, 'fields.messageText.en-US')}/>}
             </div>

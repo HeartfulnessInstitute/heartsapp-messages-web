@@ -10,7 +10,7 @@ import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
 import RichTextEditor from '../../components/RichTextEditor';
 import PreviewComponent from '../../components/PreviewComponent'
-
+import './style.scss';
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
@@ -85,9 +85,7 @@ let MessageAppForm = (props) => {
   const onChange = (state) => {
     setEditorState(state)
   }
-  const handleOk = () => {
-    setformData({ showModal: false, title: "", video: "", url: "", imageData: "" })
-  };
+  
 
   const handleCancel = () => {
     setformData({ showModal: false, title: "", video: "", url: "", imageData: "" })
@@ -140,8 +138,9 @@ let MessageAppForm = (props) => {
       </Form>
       <Modal
         visible={formData.showModal}
-        onOk={handleOk}
         onCancel={handleCancel}
+        footer={null}
+        className="modal-class"
       >
         <PreviewComponent formData={formData}></PreviewComponent>
       </Modal>
@@ -191,4 +190,3 @@ MessageAppForm = connect(
 
 
 export default MessageAppForm;
-

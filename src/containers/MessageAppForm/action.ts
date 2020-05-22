@@ -79,6 +79,8 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                     data.fields.videoUrl = {
                         'en-US': formData.url
                     }
+
+                    //formdData id exists env.updateEntry()
                     env.createEntry('message', data).then((res) => {
                         if (publish) {
                             res.publish()

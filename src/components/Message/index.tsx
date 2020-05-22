@@ -57,16 +57,19 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
             <h2>
                 {get(message, 'fields.title.en-US')}
             </h2>
-            {!message.isPublished() && <Button 
+            {!message.isPublished() && <div className="btn-group">
+            <Button icon={<EditOutlined />} onClick={() => OnEditMessage()}></Button>
+            <Button 
                 onClick={() => onDeleteMessage(message.sys.id)} 
                 className="delete-btn" 
                 type="danger" 
                 icon={<DeleteOutlined />} 
                 size={'middle'} 
-                loading={showDeleteMessageLoader && showDeleteMessageLoader[message.sys.id]} />}
+                loading={showDeleteMessageLoader && showDeleteMessageLoader[message.sys.id]} />
+                </div>}
               {message.fields.videoUrl && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/>}
               {message.fields.image_url && <img id={get(message, 'fields.image_url.en-US.sys.id')} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAAAA1BMVEXy8vJkA4prAAAASElEQVR4nO3BMQEAAADCoPVPbQ0PoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIALA8UNAAFusnLHAAAAAElFTkSuQmCC" />}
-              <Button icon={<EditOutlined />} onClick={() => OnEditMessage()}></Button>
+             
             <div>
                 {message.fields.messageText && <RichTextRenderer renderDocument={get(message, 'fields.messageText.en-US')}/>}
             </div>

@@ -43,7 +43,7 @@ let MessageAppForm = (props) => {
   const submit = (publish) => async (values) => {
     const content = editorState.getCurrentContent()
     const document = await richTextFromMarkdown(stateToMarkdown(content));
-    let data = { title: values.title, messageText: document, url: '', image: '' };
+    let data = { title: values.title, messageText: document, url: '', image: '', id: props.initialValues.id };
     if (values.media === 'video') {
       data = { ...data, url: values.url }
     } else {

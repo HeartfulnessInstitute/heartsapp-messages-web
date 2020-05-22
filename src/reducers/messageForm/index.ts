@@ -3,7 +3,8 @@ import {FILL_FORM} from '../../components/Message/action'
 function messageForm(state = {
     data: {
         media: 'video',
-        title: ''
+        title: '',
+        id: ''
     },
 }, action) {
     switch (action.type) {

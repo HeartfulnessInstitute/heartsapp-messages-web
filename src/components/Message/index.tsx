@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Card } from 'antd';
 import { get } from 'lodash';
 import { Button } from 'antd';
+import { connect } from 'react-redux';
 import { DeleteOutlined,EditOutlined} from '@ant-design/icons';
 import { fetchImageById } from '../../Services/fetchImage';
 import { Redirect} from 'react-router-dom';
 import './style.scss'
 import RichTextRenderer from '../RichTextRenderer';
-
+let Message = (props) => {
 interface MessageProps {
     message: {[key: string]: any}
     onDeleteMessage: (id) => void;
@@ -65,5 +66,22 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
         </Card>
     )
 }
-
+}
+const mapStateToProps = state => {
+   
+  
+  }
+  
+const mapDispatchToProps = (dispatch) => {
+    return {
+      addData: (data) => dispatch(addData(data))
+    }
+  }
+  
+Message = connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(Message)
+  
+  
 export default Message;

@@ -22,6 +22,7 @@
     "env-cmd": "^10.1.0",
     "history": "^4.10.1",
     "lodash": "^4.17.15",
+    "markdown-draft-js": "^2.2.0",
     "node-sass": "^4.13.1",
     "query-string": "^6.12.1",
     "react": "^16.13.1",

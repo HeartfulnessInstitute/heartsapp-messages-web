@@ -6,15 +6,19 @@ import { connect } from 'react-redux';
 import { DeleteOutlined,EditOutlined} from '@ant-design/icons';
 import { fetchImageById } from '../../Services/fetchImage';
 import { Redirect} from 'react-router-dom';
-import './style.scss'
+import { addData } from './action';
 import RichTextRenderer from '../RichTextRenderer';
-let Message = (props) => {
+
+import './style.scss'
+
+
 interface MessageProps {
     message: {[key: string]: any}
     onDeleteMessage: (id) => void;
     showDeleteMessageLoader: {[id: string]: boolean}
+    addData?: (data) => void;
 }
-const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMessageLoader}) => {
+let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMessageLoader, addData}) => {
 
     const [updateImage, updateImageSrc] = useState(false);
 
@@ -22,7 +26,6 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
 
     const getImage = (message) => {
         fetchImageById(get(message, 'fields.image_url.en-US.sys.id')).then((imgSrc) => {
-            console.log('image src', imgSrc)
             let imageElement = document.getElementById(get(message, 'fields.image_url.en-US.sys.id'));
             if(imageElement) {
                 imageElement.setAttribute('src', imgSrc as string)
@@ -31,15 +34,19 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
         })
     }
     const OnEditMessage = () =>{
-        console.log("hi")
-        //dipatch message data
+        let data = {};
+        data['id'] = get(message, 'sys.id')
+        data['title'] = get(message, 'fields.title.en-US');
+        data['media'] = message.fields.videoUrl ? 'video' : 'image';
+        data['imageId'] = message.fields.image_url ? get(message, 'fields.image_url.en-US.sys.id') : '';
+        data['url'] = message.fields.videoUrl ? get(message, 'fields.videoUrl.en-US') : '';
+        data['message'] = get(message, 'fields.messageText.en-US')
+        addData(data)
         updateRedirectToEdit(true)
     }
 
     message.fields.image_url && getImage(message)
-    console.log(message)
     const res = message.fields.videoUrl && get(message, 'fields.videoUrl.en-US').split('/')
-    console.log("res",res)
         if(redirectToEdit) {
             return (
                 <Redirect to='/edit' />
@@ -66,11 +73,6 @@ const Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMe
         </Card>
     )
 }
-}
-const mapStateToProps = state => {
-   
-  
-  }
   
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -79,7 +81,7 @@ const mapDispatchToProps = (dispatch) => {
   }
   
 Message = connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
   )(Message)
   

@@ -6,7 +6,6 @@ export const SET_MESSAGES_LIST_LOADER = "SET_MESSAGES_LIST_LOADER";
 export const addOrUpdateMessage = (formData, publish) => dispatch => {
     const loaderType = publish ? "publish" : "draft";
     dispatch(setLoader(loaderType))
-    console.log("publish value",publish)
     return client.getSpace('0il7a0jwfqsh')
         .then((space) => {
             let data = {
@@ -56,7 +55,6 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                             ).then((res) =>
                                 res.publish()
                             ).then((response) => {
-                                console.log('response ==>>', response)
                                 data.fields.image_url['en-US'] = {
                                     'sys': {
                                         'id': response.sys.id,
@@ -65,7 +63,6 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                     }
                                 }
                                 env.createEntry('message', data).then((entry) => {
-                                    console.log('success',formData.image.file)
                                     if (publish) {
                                         res.publish()
                                         
@@ -83,7 +80,6 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                         'en-US': formData.url
                     }
                     env.createEntry('message', data).then((res) => {
-                        console.log('successssss', res)
                         if (publish) {
                             res.publish()
                         }
@@ -95,7 +91,6 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
 
             // Now that we have a space, we can get entries from that space
         }).catch((e) => {
-            console.log('fail ===>', e)
             dispatch(setLoader(""))
         }
         )

@@ -170,9 +170,10 @@ const selector = formValueSelector('MessageForm')
 const mapStateToProps = state => {
   // can select values individually
   const mediaValue = selector(state, 'media')
+  const data = state.messageForm.data
   return {
     mediaValue,
-    initialValues: { media: 'video', title: state.messageForm.data.title },
+    initialValues: { ...data},
     showLoaderForPublish: state.loaderStore.loaders.addMessage
   }
 

@@ -2,7 +2,7 @@
 import {FILL_FORM} from '../../components/Message/action'
 function messageForm(state = {
     data: {
-        media: '',
+        media: 'video',
         title: ''
     },
 }, action) {

@@ -9,7 +9,6 @@ const PreviewComponent = (props) => {
     
         if(props.formData.media === 'image') {
         const imageContents=props.formData.imageData
-        console.log("message",props.formData)
         var fileReader: FileReader = new FileReader();
         fileReader.onload = function (event: Event) {
             const imageEle = document.getElementById("preview-image") as HTMLImageElement

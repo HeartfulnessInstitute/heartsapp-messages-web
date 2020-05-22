@@ -41,7 +41,6 @@ class ListMessages extends React.Component<ListMessagesProps, ListMessagesState>
 
     render() {
         const { messages, showLoader, showDeleteMessageLoader } = this.props;
-        console.log(messages, 'load message')
         return(
             <Dashboard>
               <div className="message-list-wrapper">

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useEffect} from 'react';
 import { Switch, Route, useLocation, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as qs from "query-string";

@@ -81,12 +81,40 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                     }
 
                     //formdData id exists env.updateEntry()
-                    env.createEntry('message', data).then((res) => {
-                        if (publish) {
-                            res.publish()
-                        }
-                        dispatch(setLoader(""))
-                    })
+                    if(formData.id) {
+                        console.log(env, 'test')
+                        env.getEntry(formData.id).then(entry => {
+                    
+                            // Build a plainObject in order to make it usable for React (saving in state or redux)
+                            const plainObject = entry.toPlainObject();
+                         
+                            // The entry is being updated in some way as plainObject:
+                            const updatedPlainObject = {
+                              ...plainObject,
+                              fields: {
+                                ...plainObject.fields,
+                                ...data.fields
+                              }
+                            };
+                         
+                            // Rebuild an sdk object out of the updated plainObject:
+                            const entryWithMethodsAgain = env.getEntryFromData(updatedPlainObject);
+                         
+                            // Update with help of the sdk method:
+                            if(publish) {
+                                entryWithMethodsAgain.publish()
+                            } else {
+                                entryWithMethodsAgain.update();
+                            }                         
+                          });
+                    }else {
+                        env.createEntry('message', data).then((res) => {
+                            if (publish) {
+                                res.publish()
+                            }
+                            dispatch(setLoader(""))
+                        })
+                    }
                 }
 
             })

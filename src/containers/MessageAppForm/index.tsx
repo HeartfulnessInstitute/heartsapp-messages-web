@@ -2,11 +2,11 @@ import React, {useEffect} from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector } from "redux-form";
 import { Input, Button, Form, Radio, notification, Modal } from "antd";
-import { EditorState, RichUtils, convertFromHTML, convertToRaw, ContentState } from 'draft-js';
+import { EditorState, RichUtils, convertFromHTML, ContentState } from 'draft-js';
 import { stateToMarkdown } from "draft-js-export-markdown";
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
-import { markdownToDraft } from 'markdown-draft-js';
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
+import { addData } from '../../components/Message/action';
 
 import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
@@ -16,11 +16,10 @@ import './style.scss';
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
-  let { handleSubmit, mediaValue, reset, showLoaderForPublish } = props
+  let { handleSubmit, mediaValue, reset, showLoaderForPublish, addData } = props
 
   useEffect(() => {
     // Update the document title using the browser API
-   console.log('did i', props.initialValues)
    const messageMarkup = documentToHtmlString(props.initialValues.message)
     const blocksFromHTML = convertFromHTML(messageMarkup);
     const messageState = ContentState.createFromBlockArray(
@@ -28,18 +27,25 @@ let MessageAppForm = (props) => {
       blocksFromHTML.entityMap,
     );
     setEditorState(EditorState.createWithContent(messageState))
+  },[]);
+
+  useEffect(() => {
+    return () => {
+      console.log('will unmount');
+      addData({})
+    }
   }, []);
 
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
 
-   
   const [imageData, setImageData] = React.useState()
-  const [formData, setformData] = React.useState(
-    { showModal: false, title: '', video: '', url: '', imageData }
 
-  )
+  const [formData, setformData] = React.useState(
+    { showModal: false, title: '', video: '', url: '', imageData })
+
+
   const submit = (publish) => async (values) => {
     const content = editorState.getCurrentContent()
     const document = await richTextFromMarkdown(stateToMarkdown(content));
@@ -49,8 +55,10 @@ let MessageAppForm = (props) => {
     } else {
       data = { ...data, image: imageData }
     }
+    console.log(data, 'data ==>')
     props.addOrUpdateMessage(data, publish).then(() => {
       clearForm()
+      addData({})
       notification.success({
         message: 'Message created successfully!',
       });
@@ -109,7 +117,8 @@ let MessageAppForm = (props) => {
 
   const preview = async(values) => {
     let data = { ...values, showModal: true, imageData }
-    
+    const content = editorState.getCurrentContent()
+    data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
    setformData(data)
   }
 
@@ -119,7 +128,6 @@ let MessageAppForm = (props) => {
         <h2 style={{ 'textAlign': "center", 'marginBottom': '25px' }}>Message </h2>
         <Field name="title" component={AInput} placeholder="Title" hasFeedback />
 
-        {/* <Editor editorState={editorState} onChange={setEditorState} /> */}
         <RichTextEditor
           _handleKeyCommand={_handleKeyCommand}
           _onTab={_onTab}
@@ -196,7 +204,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addOrUpdateMessage: (data, publish) => dispatch(addOrUpdateMessage(data, publish))
+    addOrUpdateMessage: (data, publish) => dispatch(addOrUpdateMessage(data, publish)),
+    addData: (data) => dispatch(addData(data))
   }
 }
 

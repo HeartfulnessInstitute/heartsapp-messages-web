@@ -47,6 +47,8 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
 
     message.fields.image_url && getImage(message)
     const res = message.fields.videoUrl && get(message, 'fields.videoUrl.en-US').split('/')
+
+    console.log('result ==>', message.fields.videoUrl)
         if(redirectToEdit) {
             return (
                 <Redirect to='/edit' />
@@ -67,7 +69,7 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
                 size={'middle'} 
                 loading={showDeleteMessageLoader && showDeleteMessageLoader[message.sys.id]} />
                 </div>}
-              {message.fields.videoUrl && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/>}
+              {message.fields.videoUrl && message.fields.videoUrl["en-US"] && <iframe width="420" height="345" src={"https://www.youtube.com/embed/"+res[res.length-1]} allowFullScreen/>}
               {message.fields.image_url && <img id={get(message, 'fields.image_url.en-US.sys.id')} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARwAAACxCAMAAAAh3/JWAAAAA1BMVEXy8vJkA4prAAAASElEQVR4nO3BMQEAAADCoPVPbQ0PoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIALA8UNAAFusnLHAAAAAElFTkSuQmCC" />}
              
             <div>

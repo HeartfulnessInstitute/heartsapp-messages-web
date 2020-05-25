@@ -97,6 +97,8 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                               }
                             };
                          
+
+                            console.log(updatedPlainObject, 'updated plain obj')
                             // Rebuild an sdk object out of the updated plainObject:
                             const entryWithMethodsAgain = env.getEntryFromData(updatedPlainObject);
                          

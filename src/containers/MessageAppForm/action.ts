@@ -107,6 +107,7 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                 entryWithMethodsAgain.update();
                             }                         
                           });
+                          dispatch(setLoader(""))
                     }else {
                         env.createEntry('message', data).then((res) => {
                             if (publish) {

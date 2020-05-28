@@ -22,12 +22,15 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
 
     const [updateImage, updateImageSrc] = useState(false);
 
-    const [redirectToEdit, updateRedirectToEdit] = useState(false)
+    const [redirectToEdit, updateRedirectToEdit] = useState(false);
+    
+    const messaegIdToSrc = {}
 
     const getImage = (message) => {
         fetchImageById(get(message, 'fields.image_url.en-US.sys.id')).then((imgSrc) => {
             let imageElement = document.getElementById(get(message, 'fields.image_url.en-US.sys.id'));
             if(imageElement) {
+                messaegIdToSrc[message.sys.id] = imgSrc
                 imageElement.setAttribute('src', imgSrc as string)
                 updateImageSrc(true)
             }
@@ -38,7 +41,7 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
         data['id'] = get(message, 'sys.id')
         data['title'] = get(message, 'fields.title.en-US');
         data['media'] = message.fields.videoUrl ? 'video' : 'image';
-        data['imageId'] = message.fields.image_url ? get(message, 'fields.image_url.en-US.sys.id') : '';
+        data['imageSrc'] = message.fields.image_url ? messaegIdToSrc[get(message, 'sys.id')] : '';
         data['url'] = message.fields.videoUrl ? get(message, 'fields.videoUrl.en-US') : '';
         data['message'] = get(message, 'fields.messageText.en-US')
         addData(data)

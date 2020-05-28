@@ -20,6 +20,8 @@ let MessageAppForm = (props) => {
 
   useEffect(() => {
     // Update the document title using the browser API
+
+    console.log('initial value', props.initialValues)
    const messageMarkup = documentToHtmlString(props.initialValues.message)
     const blocksFromHTML = convertFromHTML(messageMarkup);
     const messageState = ContentState.createFromBlockArray(

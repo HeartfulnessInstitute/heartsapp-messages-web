@@ -7,7 +7,6 @@ import { stateToMarkdown } from "draft-js-export-markdown";
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
 import { addData } from '../../components/Message/action';
-
 import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
 import RichTextEditor from '../../components/RichTextEditor';
@@ -22,6 +21,9 @@ let MessageAppForm = (props) => {
     // Update the document title using the browser API
 
     console.log('initial value', props.initialValues)
+    const imageBlobFile=props.initialValues.imageUrl
+    var outputfile=new File([imageBlobFile], "filename")
+    console.log("heer is the name",outputfile)
    const messageMarkup = documentToHtmlString(props.initialValues.message)
     const blocksFromHTML = convertFromHTML(messageMarkup);
     const messageState = ContentState.createFromBlockArray(
@@ -29,6 +31,7 @@ let MessageAppForm = (props) => {
       blocksFromHTML.entityMap,
     );
     setEditorState(EditorState.createWithContent(messageState))
+    setImageData(outputfile)
   },[]);
 
   useEffect(() => {
@@ -41,7 +44,7 @@ let MessageAppForm = (props) => {
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
-
+  const [imageUrl,setImgaeUrl]=React.useState()
   const [imageData, setImageData] = React.useState()
 
   const [formData, setformData] = React.useState(
@@ -121,6 +124,7 @@ let MessageAppForm = (props) => {
     let data = { ...values, showModal: true, imageData }
     const content = editorState.getCurrentContent()
     data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
+    console.log("data",data)
    setformData(data)
   }
 
@@ -145,7 +149,7 @@ let MessageAppForm = (props) => {
 
         {
           mediaValue === 'image' ?
-            <input type="file" onChange={(e) => setImageData(e.target.files[0])} />
+            <input type="file" onChange={(e) => setImageData(e.target.files[0])}/>
             : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
         }
 
@@ -168,6 +172,7 @@ let MessageAppForm = (props) => {
         className="modal-class"
       >
         <PreviewComponent formData={formData}></PreviewComponent>
+        
       </Modal>
     </div>
   )

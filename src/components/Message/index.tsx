@@ -36,7 +36,7 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
             }
         })
     }
-    const OnEditMessage = () =>{
+    const OnEditMessage = async() =>{
         let data = {};
         data['id'] = get(message, 'sys.id')
         data['title'] = get(message, 'fields.title.en-US');
@@ -44,10 +44,14 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
         data['imageSrc'] = message.fields.image_url ? messaegIdToSrc[get(message, 'sys.id')] : '';
         data['url'] = message.fields.videoUrl ? get(message, 'fields.videoUrl.en-US') : '';
         data['message'] = get(message, 'fields.messageText.en-US')
+        let file = await fetch(data['imageSrc']).then(r => r.blob()).then(blobFile => new File([blobFile], "fileNameGoesHere", { type: "image/png" }))
+        data['imageUrl']=file
         addData(data)
         updateRedirectToEdit(true)
+        
+        console.log("converted",data['imageUrl'])
     }
-
+    
     message.fields.image_url && getImage(message)
     const res = message.fields.videoUrl && get(message, 'fields.videoUrl.en-US').split('/')
 

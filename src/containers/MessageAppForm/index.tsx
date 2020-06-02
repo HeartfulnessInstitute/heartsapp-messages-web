@@ -23,7 +23,6 @@ let MessageAppForm = (props) => {
     console.log('initial value', props.initialValues)
     const imageBlobFile=props.initialValues.imageUrl
     var outputfile=new File([imageBlobFile], "filename")
-    console.log("heer is the name",outputfile)
    const messageMarkup = documentToHtmlString(props.initialValues.message)
     const blocksFromHTML = convertFromHTML(messageMarkup);
     const messageState = ContentState.createFromBlockArray(
@@ -31,7 +30,9 @@ let MessageAppForm = (props) => {
       blocksFromHTML.entityMap,
     );
     setEditorState(EditorState.createWithContent(messageState))
-    setImageData(outputfile)
+     setImageData(outputfile)
+    setFileName(props.initialValues.file_name)
+    
   },[]);
 
   useEffect(() => {
@@ -44,7 +45,8 @@ let MessageAppForm = (props) => {
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
-  const [imageUrl,setImgaeUrl]=React.useState()
+  const [fileName,setFileName]=React.useState()
+  console.log("file namemmm",fileName)
   const [imageData, setImageData] = React.useState()
 
   const [formData, setformData] = React.useState(
@@ -74,7 +76,10 @@ let MessageAppForm = (props) => {
       });
     })
   }
-
+  const onFileChange = (e) => {
+        setImageData(e.target.files[0])
+        setFileName(e.target.files[0].title)
+      }
   const clearForm = () => {
     reset()
     setEditorState(EditorState.createEmpty())
@@ -149,7 +154,7 @@ let MessageAppForm = (props) => {
 
         {
           mediaValue === 'image' ?
-            <input type="file" onChange={(e) => setImageData(e.target.files[0])}/>
+            <input type="file" onChange={(e) => onFileChange}/>
             : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
         }
 

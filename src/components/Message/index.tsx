@@ -44,12 +44,13 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
         data['imageSrc'] = message.fields.image_url ? messaegIdToSrc[get(message, 'sys.id')] : '';
         data['url'] = message.fields.videoUrl ? get(message, 'fields.videoUrl.en-US') : '';
         data['message'] = get(message, 'fields.messageText.en-US')
+        data['file_name']=message.fields.file_name ? get(message, 'fields.file_name.en-US') : '';
         let file = await fetch(data['imageSrc']).then(r => r.blob()).then(blobFile => new File([blobFile], "fileNameGoesHere", { type: "image/png" }))
         data['imageUrl']=file
         addData(data)
         updateRedirectToEdit(true)
         
-        console.log("converted",data['imageUrl'])
+        console.log("converted",message.fields.file_name)
     }
     
     message.fields.image_url && getImage(message)
@@ -81,6 +82,7 @@ let Message: React.FC<MessageProps> = ({message, onDeleteMessage, showDeleteMess
              
             <div>
                 {message.fields.messageText && <RichTextRenderer renderDocument={get(message, 'fields.messageText.en-US')}/>}
+                
             </div>
         </Card>
     )

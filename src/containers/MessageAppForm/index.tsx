@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Field, reduxForm, formValueSelector } from "redux-form";
 import { Input, Button, Form, Radio, notification, Modal } from "antd";
@@ -21,19 +21,18 @@ let MessageAppForm = (props) => {
     // Update the document title using the browser API
 
     console.log('initial value', props.initialValues)
-    const imageBlobFile=props.initialValues.imageUrl
-    var outputfile=new File([imageBlobFile], "filename")
-   const messageMarkup = documentToHtmlString(props.initialValues.message)
+    const imageBlobFile = props.initialValues.imageUrl
+    const messageMarkup = documentToHtmlString(props.initialValues.message)
     const blocksFromHTML = convertFromHTML(messageMarkup);
     const messageState = ContentState.createFromBlockArray(
       blocksFromHTML.contentBlocks,
       blocksFromHTML.entityMap,
     );
     setEditorState(EditorState.createWithContent(messageState))
-     setImageData(outputfile)
-    setFileName(props.initialValues.file_name)
-    
-  },[]);
+    setImageData(imageBlobFile)
+    setFileName(props.initialValues.file_name)
+
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -45,8 +44,8 @@ let MessageAppForm = (props) => {
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
-  const [fileName,setFileName]=React.useState()
-  console.log("file namemmm",fileName)
+  const [fileName, setFileName] = React.useState()
+  console.log("file namemmm", fileName)
   const [imageData, setImageData] = React.useState()
 
   const [formData, setformData] = React.useState(
@@ -77,9 +76,9 @@ let MessageAppForm = (props) => {
     })
   }
   const onFileChange = (e) => {
-        setImageData(e.target.files[0])
-        setFileName(e.target.files[0].title)
-      }
+    setImageData(e.target.files[0])
+    setFileName(e.target.files[0].title)
+  }
   const clearForm = () => {
     reset()
     setEditorState(EditorState.createEmpty())
@@ -119,18 +118,18 @@ let MessageAppForm = (props) => {
   const onChange = (state) => {
     setEditorState(state)
   }
-  
+
 
   const handleCancel = () => {
     setformData({ showModal: false, title: "", video: "", url: "", imageData: "" })
   };
 
-  const preview = async(values) => {
+  const preview = async (values) => {
     let data = { ...values, showModal: true, imageData }
     const content = editorState.getCurrentContent()
     data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
-    console.log("data",data)
-   setformData(data)
+    console.log("data", data)
+    setformData(data)
   }
 
   return (
@@ -154,7 +153,13 @@ let MessageAppForm = (props) => {
 
         {
           mediaValue === 'image' ?
-            <input type="file" onChange={(e) => onFileChange}/>
+            props.initialValues.file_name ?
+              <div>
+                <span>{props.initialValues.file_name}</span>
+                <input type="file" onChange={(e) => onFileChange} />
+              </div>
+              :
+              <input type="file" onChange={(e) => onFileChange} />
             : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
         }
 
@@ -177,7 +182,7 @@ let MessageAppForm = (props) => {
         className="modal-class"
       >
         <PreviewComponent formData={formData}></PreviewComponent>
-        
+
       </Modal>
     </div>
   )
@@ -205,10 +210,10 @@ const mapStateToProps = state => {
   // can select values individually
   const mediaValue = selector(state, 'media')
   const data = state.messageForm.data
-  
+
   return {
     mediaValue,
-    initialValues: { ...data},
+    initialValues: { ...data },
     showLoaderForPublish: state.loaderStore.loaders.addMessage
   }
 

@@ -67,7 +67,36 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                     }
                                 }
                                 data.fields.file_name['en-US'] = formData.image.name
-                               
+                                if (formData.id) {
+                                    console.log(env, 'test')
+                                    env.getEntry(formData.id).then(entry => {
+            
+                                        // Build a plainObject in order to make it usable for React (saving in state or redux)
+                                        const plainObject = entry.toPlainObject();
+                                        console.log("hree is the ",plainObject)
+                                        // The entry is being updated in some way as plainObject:
+                                        const updatedPlainObject = {
+                                            ...plainObject,
+                                            fields: {
+                                                ...plainObject.fields,
+                                                ...data.fields
+                                            }
+                                        };
+            
+            
+                                        console.log(updatedPlainObject, 'updated plain obj')
+                                        // Rebuild an sdk object out of the updated plainObject:
+                                        const entryWithMethodsAgain = env.getEntryFromData(updatedPlainObject);
+            
+                                        // Update with help of the sdk method:
+                                        if (publish) {
+                                            entryWithMethodsAgain.publish()
+                                        } else {
+                                            entryWithMethodsAgain.update();
+                                        }
+                                    });
+                                    dispatch(setLoader(""))
+                                } else{
                                 env.createEntry('message', data).then((entry) => {
                                     if (publish) {
                                         res.publish()
@@ -75,8 +104,9 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                     }
                                     dispatch(setLoader(""))
                                 })
-
+                            }
                             })
+                        
 
                         })
                     }, false);
@@ -93,7 +123,7 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
 
                             // Build a plainObject in order to make it usable for React (saving in state or redux)
                             const plainObject = entry.toPlainObject();
-
+                            console.log("hree is the ",plainObject)
                             // The entry is being updated in some way as plainObject:
                             const updatedPlainObject = {
                                 ...plainObject,

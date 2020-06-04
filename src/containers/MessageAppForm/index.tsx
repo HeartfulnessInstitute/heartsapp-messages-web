@@ -150,18 +150,14 @@ let MessageAppForm = (props) => {
           <Radio value="video">Add video</Radio>
           <Radio value="image">Add Image</Radio>
         </Field>
-
         {
-          mediaValue === 'image' ?
-            props.initialValues.file_name ?
-              <div>
-                <span>{props.initialValues.file_name}</span>
-                <input type="file" onChange={(e) => onFileChange} />
-              </div>
-              :
-              <input type="file" onChange={(e) => onFileChange} />
-            : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
-        }
+          mediaValue === 'image' ?
+              <div>
+                 {fileName && <span className="file-name-style">{fileName}</span>}
+                <input type="file" onChange={(e) => onFileChange(e)} />
+              </div>
+            : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
+        }
 
         <Form.Item style={{ 'textAlign': 'center' }}>
           <Button type="primary" disabled={showLoaderForPublish === "draft"} htmlType="submit" loading={showLoaderForPublish === "draft"} onClick={handleSubmit(submit(false))}>

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Redirect} from 'react-router-dom';
 import { Field, reduxForm, formValueSelector } from "redux-form";
 import { Input, Button, Form, Radio, notification, Modal } from "antd";
 import { EditorState, RichUtils, convertFromHTML, ContentState } from 'draft-js';
@@ -16,6 +17,7 @@ const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
   let { handleSubmit, mediaValue, reset, showLoaderForPublish, addData } = props
+  
 
   useEffect(() => {
     // Update the document title using the browser API
@@ -28,6 +30,7 @@ let MessageAppForm = (props) => {
       blocksFromHTML.contentBlocks,
       blocksFromHTML.entityMap,
     );
+
     setEditorState(EditorState.createWithContent(messageState))
     setImageData(imageBlobFile)
     setFileName(props.initialValues.file_name)
@@ -40,10 +43,12 @@ let MessageAppForm = (props) => {
       addData({})
     }
   }, []);
-
+  
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
+  const [redirectToView, setRedirectToView] = React.useState(false);
+
   const [fileName, setFileName] = React.useState()
   console.log("file namemmm", fileName)
   const [imageData, setImageData] = React.useState()
@@ -63,18 +68,30 @@ let MessageAppForm = (props) => {
     }
     console.log(data, 'data ==>')
     props.addOrUpdateMessage(data, publish).then(() => {
+      setRedirectToView(true)
       clearForm()
       addData({})
       notification.success({
         message: 'Message created successfully!',
+        
       });
-    }).catch((e) => {
+      console.log("here after success",redirectToView)
+      if(redirectToView) {
+        return (
+            <Redirect to='/login' />
+        )
+    }
+    
+      
+    })
+    .catch((e) => {
       clearForm()
       notification.error({
         message: 'Something went wrong please try again.',
       });
     })
   }
+  
   const onFileChange = (e) => {
     setImageData(e.target.files[0])
     setFileName(e.target.files[0].title)
@@ -128,7 +145,6 @@ let MessageAppForm = (props) => {
     let data = { ...values, showModal: true, imageData }
     const content = editorState.getCurrentContent()
     data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
-    console.log("data", data)
     setformData(data)
   }
 

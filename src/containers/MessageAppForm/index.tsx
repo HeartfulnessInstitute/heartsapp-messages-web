@@ -68,30 +68,23 @@ let MessageAppForm = (props) => {
     }
     console.log(data, 'data ==>')
     props.addOrUpdateMessage(data, publish).then(() => {
-      setRedirectToView(true)
+      
       clearForm()
       addData({})
       notification.success({
         message: 'Message created successfully!',
         
       });
-      console.log("here after success",redirectToView)
-      if(redirectToView) {
-        return (
-            <Redirect to='/login' />
-        )
-    }
-    
-      
+      setRedirectToView(true)
     })
+  
     .catch((e) => {
       clearForm()
       notification.error({
         message: 'Something went wrong please try again.',
       });
     })
-  }
-  
+  } 
   const onFileChange = (e) => {
     setImageData(e.target.files[0])
     setFileName(e.target.files[0].title)
@@ -147,7 +140,11 @@ let MessageAppForm = (props) => {
     data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
     setformData(data)
   }
-
+  if(redirectToView) {
+    return (
+        <Redirect to='/messages' />
+    )
+}
   return (
     <div >
       <Form>

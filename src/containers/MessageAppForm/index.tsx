@@ -1,11 +1,13 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
+import { Redirect} from 'react-router-dom';
 import { Field, reduxForm, formValueSelector } from "redux-form";
 import { Input, Button, Form, Radio, notification, Modal } from "antd";
-import { EditorState, RichUtils } from 'draft-js';
+import { EditorState, RichUtils, convertFromHTML, ContentState } from 'draft-js';
 import { stateToMarkdown } from "draft-js-export-markdown";
+import { documentToHtmlString } from '@contentful/rich-text-html-renderer';
 import { richTextFromMarkdown } from '@contentful/rich-text-from-markdown';
-
+import { addData } from '../../components/Message/action';
 import MakeField from '../../components/Forms/MakeField';
 import { addOrUpdateMessage } from './action';
 import RichTextEditor from '../../components/RichTextEditor';
@@ -14,38 +16,79 @@ import './style.scss';
 const AInput = MakeField(Input)
 const ARadioGroup = MakeField(Radio.Group);
 let MessageAppForm = (props) => {
-  let { handleSubmit, mediaValue, reset, showLoaderForPublish } = props
+  let { handleSubmit, mediaValue, reset, showLoaderForPublish, addData } = props
+  
 
+  useEffect(() => {
+    // Update the document title using the browser API
+
+    console.log('initial value', props.initialValues)
+    const imageBlobFile = props.initialValues.imageUrl
+    const messageMarkup = documentToHtmlString(props.initialValues.message)
+    const blocksFromHTML = convertFromHTML(messageMarkup);
+    const messageState = ContentState.createFromBlockArray(
+      blocksFromHTML.contentBlocks,
+      blocksFromHTML.entityMap,
+    );
+
+    setEditorState(EditorState.createWithContent(messageState))
+    setImageData(imageBlobFile)
+    setFileName(props.initialValues.file_name)
+
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      console.log('will unmount');
+      addData({})
+    }
+  }, []);
+  
   const [editorState, setEditorState] = React.useState(
     EditorState.createEmpty()
   );
-  const [imageData, setImageData] = React.useState()
-  const [formData, setformData] = React.useState(
-    { showModal: false, title: '', video: '', url: '', imageData }
+  const [redirectToView, setRedirectToView] = React.useState(false);
 
-  )
+  const [fileName, setFileName] = React.useState()
+  console.log("file namemmm", fileName)
+  const [imageData, setImageData] = React.useState()
+
+  const [formData, setformData] = React.useState(
+    { showModal: false, title: '', video: '', url: '', imageData })
+
+
   const submit = (publish) => async (values) => {
     const content = editorState.getCurrentContent()
     const document = await richTextFromMarkdown(stateToMarkdown(content));
-    let data = { title: values.title, messageText: document, url: '', image: '' };
+    let data = { title: values.title, messageText: document, url: '', image: '', id: props.initialValues.id };
     if (values.media === 'video') {
       data = { ...data, url: values.url }
     } else {
       data = { ...data, image: imageData }
     }
+    console.log(data, 'data ==>')
     props.addOrUpdateMessage(data, publish).then(() => {
+      
       clearForm()
+      addData({})
       notification.success({
         message: 'Message created successfully!',
+        
       });
-    }).catch((e) => {
+      setRedirectToView(true)
+    })
+  
+    .catch((e) => {
       clearForm()
       notification.error({
         message: 'Something went wrong please try again.',
       });
     })
+  } 
+  const onFileChange = (e) => {
+    setImageData(e.target.files[0])
+    setFileName(e.target.files[0].title)
   }
-
   const clearForm = () => {
     reset()
     setEditorState(EditorState.createEmpty())
@@ -85,26 +128,29 @@ let MessageAppForm = (props) => {
   const onChange = (state) => {
     setEditorState(state)
   }
-  
+
 
   const handleCancel = () => {
     setformData({ showModal: false, title: "", video: "", url: "", imageData: "" })
   };
 
-  const preview = async(values) => {
+  const preview = async (values) => {
     let data = { ...values, showModal: true, imageData }
     const content = editorState.getCurrentContent()
     data['document'] = await richTextFromMarkdown(stateToMarkdown(content));
     setformData(data)
   }
-
+  if(redirectToView) {
+    return (
+        <Redirect to='/messages' />
+    )
+}
   return (
     <div >
       <Form>
         <h2 style={{ 'textAlign': "center", 'marginBottom': '25px' }}>Message </h2>
         <Field name="title" component={AInput} placeholder="Title" hasFeedback />
 
-        {/* <Editor editorState={editorState} onChange={setEditorState} /> */}
         <RichTextEditor
           _handleKeyCommand={_handleKeyCommand}
           _onTab={_onTab}
@@ -117,12 +163,14 @@ let MessageAppForm = (props) => {
           <Radio value="video">Add video</Radio>
           <Radio value="image">Add Image</Radio>
         </Field>
-
         {
-          mediaValue === 'image' ?
-            <input type="file" onChange={(e) => setImageData(e.target.files[0])} />
-            : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
-        }
+          mediaValue === 'image' ?
+              <div>
+                 {fileName && <span className="file-name-style">{fileName}</span>}
+                <input type="file" onChange={(e) => onFileChange(e)} />
+              </div>
+            : <Field name="url" component={AInput} placeholder="Enter youtube url" hasFeedback />
+        }
 
         <Form.Item style={{ 'textAlign': 'center' }}>
           <Button type="primary" disabled={showLoaderForPublish === "draft"} htmlType="submit" loading={showLoaderForPublish === "draft"} onClick={handleSubmit(submit(false))}>
@@ -143,6 +191,7 @@ let MessageAppForm = (props) => {
         className="modal-class"
       >
         <PreviewComponent formData={formData}></PreviewComponent>
+
       </Modal>
     </div>
   )
@@ -169,9 +218,11 @@ const selector = formValueSelector('MessageForm')
 const mapStateToProps = state => {
   // can select values individually
   const mediaValue = selector(state, 'media')
+  const data = state.messageForm.data
+
   return {
     mediaValue,
-    initialValues: { media: 'video' },
+    initialValues: { ...data },
     showLoaderForPublish: state.loaderStore.loaders.addMessage
   }
 
@@ -179,7 +230,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addOrUpdateMessage: (data, publish) => dispatch(addOrUpdateMessage(data, publish))
+    addOrUpdateMessage: (data, publish) => dispatch(addOrUpdateMessage(data, publish)),
+    addData: (data) => dispatch(addData(data))
   }
 }
 

@@ -6,7 +6,6 @@ export const SET_MESSAGES_LIST_LOADER = "SET_MESSAGES_LIST_LOADER";
 export const addOrUpdateMessage = (formData, publish) => dispatch => {
     const loaderType = publish ? "publish" : "draft";
     dispatch(setLoader(loaderType))
-    console.log("publish value",publish)
     return client.getSpace('0il7a0jwfqsh')
         .then((space) => {
             let data = {
@@ -20,6 +19,9 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                         "en-US": formData.messageText
                     },
                     "image_url": {
+                    },
+                    "file_name": {
+                        'en-US': ''
                     }
                 }
             }
@@ -51,12 +53,12 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                 }
                             }
 
+
                             env.createAsset(filedata).then((asset) =>
                                 asset.processForAllLocales()
                             ).then((res) =>
                                 res.publish()
                             ).then((response) => {
-                                console.log('response ==>>', response)
                                 data.fields.image_url['en-US'] = {
                                     'sys': {
                                         'id': response.sys.id,
@@ -64,16 +66,47 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                                         'type': "Link"
                                     }
                                 }
+                                data.fields.file_name['en-US'] = formData.image.name
+                                if (formData.id) {
+                                    console.log(env, 'test')
+                                    env.getEntry(formData.id).then(entry => {
+            
+                                        // Build a plainObject in order to make it usable for React (saving in state or redux)
+                                        const plainObject = entry.toPlainObject();
+                                        console.log("hree is the ",plainObject)
+                                        // The entry is being updated in some way as plainObject:
+                                        const updatedPlainObject = {
+                                            ...plainObject,
+                                            fields: {
+                                                ...plainObject.fields,
+                                                ...data.fields
+                                            }
+                                        };
+            
+            
+                                        console.log(updatedPlainObject, 'updated plain obj')
+                                        // Rebuild an sdk object out of the updated plainObject:
+                                        const entryWithMethodsAgain = env.getEntryFromData(updatedPlainObject);
+            
+                                        // Update with help of the sdk method:
+                                        if (publish) {
+                                            entryWithMethodsAgain.publish()
+                                        } else {
+                                            entryWithMethodsAgain.update();
+                                        }
+                                    });
+                                    dispatch(setLoader(""))
+                                } else{
                                 env.createEntry('message', data).then((entry) => {
-                                    console.log('success',formData.image.file)
                                     if (publish) {
                                         res.publish()
-                                        
+
                                     }
                                     dispatch(setLoader(""))
                                 })
-
+                            }
                             })
+                        
 
                         })
                     }, false);
@@ -82,20 +115,51 @@ export const addOrUpdateMessage = (formData, publish) => dispatch => {
                     data.fields.videoUrl = {
                         'en-US': formData.url
                     }
-                    env.createEntry('message', data).then((res) => {
-                        console.log('successssss', res)
-                        if (publish) {
-                            res.publish()
-                        }
+
+                    //formdData id exists env.updateEntry()
+                    if (formData.id) {
+                        console.log(env, 'test')
+                        env.getEntry(formData.id).then(entry => {
+
+                            // Build a plainObject in order to make it usable for React (saving in state or redux)
+                            const plainObject = entry.toPlainObject();
+                            console.log("hree is the ",plainObject)
+                            // The entry is being updated in some way as plainObject:
+                            const updatedPlainObject = {
+                                ...plainObject,
+                                fields: {
+                                    ...plainObject.fields,
+                                    ...data.fields
+                                }
+                            };
+
+
+                            console.log(updatedPlainObject, 'updated plain obj')
+                            // Rebuild an sdk object out of the updated plainObject:
+                            const entryWithMethodsAgain = env.getEntryFromData(updatedPlainObject);
+
+                            // Update with help of the sdk method:
+                            if (publish) {
+                                entryWithMethodsAgain.publish()
+                            } else {
+                                entryWithMethodsAgain.update();
+                            }
+                        });
                         dispatch(setLoader(""))
-                    })
+                    } else {
+                        env.createEntry('message', data).then((res) => {
+                            if (publish) {
+                                res.publish()
+                            }
+                            dispatch(setLoader(""))
+                        })
+                    }
                 }
 
             })
 
             // Now that we have a space, we can get entries from that space
         }).catch((e) => {
-            console.log('fail ===>', e)
             dispatch(setLoader(""))
         }
         )

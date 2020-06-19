@@ -1,14 +1,15 @@
 
-
+import {FILL_FORM} from '../../components/Message/action'
 function messageForm(state = {
     data: {
-        media: 'youtube',
-        title: 'video'
+        media: 'video',
+        title: '',
+        id: ''
     },
 }, action) {
     switch (action.type) {
-        // case FILL_FORM:
-        //     return { ...state, data: action.data }
+        case FILL_FORM:
+            return { ...state, data: action.value }
         default:
             return state;
     }

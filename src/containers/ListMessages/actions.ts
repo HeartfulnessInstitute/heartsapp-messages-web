@@ -42,6 +42,8 @@ export const onDeleteMessage = (id) => dispatch => {
             dispatch(setLoader({[id]: false}, 'deleteMessage'))
             reject(e)
           })})
+
+    
     }
 
 const setLoader = (status, type) => dispatch => {

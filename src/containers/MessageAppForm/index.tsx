@@ -50,7 +50,6 @@ let MessageAppForm = (props) => {
   const [redirectToView, setRedirectToView] = React.useState(false);
 
   const [fileName, setFileName] = React.useState()
-  console.log("file namemmm", fileName)
   const [imageData, setImageData] = React.useState()
 
   const [formData, setformData] = React.useState(

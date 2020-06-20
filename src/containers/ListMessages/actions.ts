@@ -24,20 +24,27 @@ export const getMessageList = () => dispatch => {
 }
 
 export const onDeleteMessage = (id) => dispatch => {
-    dispatch(setLoader({[id]: true}, 'deleteMessage'))
-    return client.getSpace('0il7a0jwfqsh')
-    .then((space) => {
-        space.getEnvironment('master').then(env => {
-            env.getEntry(id)
-            .then((entry) => {
-               entry.delete()
-                dispatch(setLoader({[id]: false}, 'deleteMessage'))
-            })})
-        }).catch((e) => {
-        dispatch(setLoader({[id]: false}, 'deleteMessage'))
-        throw new Error(e)
-      })
-}
+        dispatch(setLoader({[id]: true}, 'deleteMessage'))
+        return new Promise((resolve, reject) => {client.getSpace('0il7a0jwfqsh')
+        .then((space) => {
+            space.getEnvironment('master').then(env => {
+                env.getEntry(id)
+                .then((entry) => {
+                   entry.delete().then(() =>{
+                    dispatch(setLoader({[id]: false}, 'deleteMessage'))
+                    resolve()
+                   }).catch((e) =>{
+                       dispatch(setLoader({[id]: false}, 'deleteMessage'))
+                        reject(e)
+                   })
+                })})
+            }).catch((e) => {
+            dispatch(setLoader({[id]: false}, 'deleteMessage'))
+            reject(e)
+          })})
+
+    
+    }
 
 const setLoader = (status, type) => dispatch => {
     dispatch({
